@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>CodePen - Tic Tac Toe</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+<link rel="stylesheet" href="C:/Users/mikha/Downloads/tic-tac-toe(2)/tic-tac-toe/dist/static/css/style.css">
+<script src='https://unpkg.com/react/umd/react.development.js'></script>
+<script src='https://unpkg.com/react-dom/umd/react-dom.development.js'></script><script  src="C:/Users/mikha/Downloads/tic-tac-toe(2)/tic-tac-toe/dist/static/js/script.js"></script>
+<script type="text/javascript"> function convertToObject(item) {
+    try {
+        // Convert single quotes to double quotes and wrap with curly braces
+        let jsonString = item.replace(/'/g, '"');
+        return JSON.parse(jsonString);
+    } catch (error) {
+        console.error("Error parsing item:", item, error);
+        return null;  // Return 'null' or some other value to handle errors
+    }
+}
+function uplads() {
+  var file = document.getElementById('jsonFile').files[0];
+
+  if (file) {
+
+    var reader = new FileReader();
+
+    reader.readAsText(file, "UTF-8");
+
+    reader.onload = function (evt) {
+
+      // Once the file is read it triggers the onload event above.
+
+      var jsonContent = evt.target.result;
+
+
+      // Make an AJAX request to your server-side script
+
+      fetch('/execute', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: jsonContent }).
+
+      then(response => response.json()).
+
+      then(data => {
+
+        // Assuming the result is a list of strings
+
+        var resultList = document.getElementById('resultList');
+
+        resultList.innerHTML = '<ul>' + data.map(str => {
+
+    	    const obj = convertToObject(str);
+	
+    	    return obj ? `<li>ID: ${obj._id} - Score: ${obj.balance}</li>` : '';
+
+	      }).join('') + '</ul>';
+
+      }).
+
+      catch(error => {
+
+        console.error('Error:', error);
+
+      });
+
+    };
+
+    reader.onerror = function (evt) {
+
+      alert("An error ocurred reading the file", evt);
+
+    };
+
+  } else {
+
+    alert("Please select a JSON file.");
+
+  }
+
+}
+</script>
+
+<style>
+
+/* main styles */
+body {
+  font-family: 'Arial', sans-serif;
+  background-color: #f4f4f4;
+  margin: 0;
+  padding: 20px;
+  color: #333;
+}
+
+h2 {
+  color: #444;
+}
+
+/* form styles */
+#frm {
+  max-width: 600px;
+  margin: auto;
+}
+
+input[type="file"] {
+  width: calc(100% - 140px);
+  padding: 10px;
+  margin-right: 20px;
+}
+
+button {
+    background-color: #5cb85c; /* Green background */
+    border: none; /* Remove borders */
+    color: white; /* White text */
+    padding: 14px 28px; /* Some padding */
+    cursor: pointer; /* Pointer/hand icon on hover */
+    font-size:16px; /* Set a font size */
+    border-radius:5px; /* Rounded corners */
+}
+
+button:hover {
+    background-color: #45a049; /* Darker green background on hover*/
+}
+
+/* result list styles */
+#resultList ul {
+  list-style-type: none;
+  padding-left: 0;
+}
+
+#resultList li {
+   background-color:#efefef;
+   border-bottom:1px solid #ddd;
+   padding:10px;
+   margin-bottom:6px;
+   border-radius:3px; 
+}
+
+/* Add responsiveness to file input and button on smaller screens */
+@media (max-width:768px) {
+   input[type="file"], button {
+      width:auto
+      flex-grow:1
+      margin-bottom:.5rem
+   }
+}
+
+input[type="file"] {
+  border: 1px solid #ddd;
+  background-color: white;
+  padding: 10px;
+  border-radius: 4px;
+  display: inline-block;
+  cursor: pointer;
+}
+
+input[type="file"]::file-selector-button {
+  background-color: #5cb85c; /* Green background */
+  color: white; /* White text */
+  border: none; /* Remove borders */
+  padding: 10px 15px; /* Some padding */
+  margin-left: -10px; /* Align with the input field */
+  border-top-right-radius: 4px; /* Rounded top right corner */
+  border-bottom-right-radius: 4px; /* Rounded bottom right corner */
+}
+
+input[type="file"]::file-selector-button:hover {
+  background-color: #45a049; /* Darker green background on hover*/
+}
+
+/* To change the file input placeholder color & font-style */
+input[type="file"]::file-selector-button::after {
+  content: 'Choose a file...';
+}
+
+</style>
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <title>JSON Upload and Execute</title>
+
+</head>
+
+<body>
+
+
+<h2>JSON File Upload</h2>
+
+
+<input type="file" id="jsonFile" accept=".json">
+
+<br> <br>
+<button id="btn" onclick="uplads()"> Upload and Execute </button>
+
+
+<div id="resultList"></div>
+
+</body>
+</html>
